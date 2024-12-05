@@ -140,54 +140,135 @@ header {
     background: rgba(26, 188, 156, 0.1);
 }
 
-/* Hero Section */
+/* Hero Section Styles */
 .hero {
     position: relative;
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    color: #fff;
     overflow: hidden;
-}
-
-#particles-js {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #1abc9c, #16a085);
-    z-index: 1;
+    background: linear-gradient(135deg, #0a192f 0%, #112240 100%);
 }
 
 .hero-content {
     position: relative;
     z-index: 2;
-    max-width: 800px;
+    max-width: 1000px;
     padding: 0 2rem;
+    text-align: center;
+}
+
+.hero-subtitle {
+    color: #1abc9c;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 0.2s forwards;
 }
 
 .hero h1 {
-    font-size: 3.5rem;
+    font-size: 4.5rem;
+    line-height: 1.1;
     margin-bottom: 1.5rem;
-    color: #ffffff;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-    animation: fadeInUp 1s ease-out;
-}
-
-.hero h1 .highlight {
-    color: #5e3c78;
-    font-weight: bold;
-}
-
-.hero p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    animation: fadeInUp 1s ease-out 0.2s;
+    background: linear-gradient(to right, #ffffff, #1abc9c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     opacity: 0;
-    animation-fill-mode: forwards;
-    color: #eeeeee;
-    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+    animation: fadeInUp 1s ease-out 0.4s forwards;
+}
+
+.hero-description {
+    font-size: 1.5rem;
+    color: #8892b0;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 0.6s forwards;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 0.8s forwards;
+}
+
+.hero-btn {
+    padding: 1rem 2rem;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    border: 2px solid transparent;
+}
+
+.hero-btn.primary {
+    background: #1abc9c;
+    color: #0a192f;
+}
+
+.hero-btn.primary:hover {
+    background: transparent;
+    border-color: #1abc9c;
+    color: #1abc9c;
+    transform: translateY(-3px);
+}
+
+.hero-btn.secondary {
+    border: 2px solid #1abc9c;
+    color: #1abc9c;
+}
+
+.hero-btn.secondary:hover {
+    background: rgba(26, 188, 156, 0.1);
+    transform: translateY(-3px);
+}
+
+/* Particles Customization */
+#particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 3rem;
+    }
+    
+    .hero-description {
+        font-size: 1.2rem;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .hero-btn {
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
+    }
 }
 
 .cta {
@@ -1117,14 +1198,13 @@ footer {
     height: 100%;
 }
 
-/* Reset and base styles */
-/* Reset and base styles */
-/* 3D Carousel Container */
-/* 3D Carousel */
+/* 3D Carousel Styles */
 .projects-showcase {
     position: relative;
     height: 600px;
     perspective: 2000px;
+    margin: 50px auto;
+    max-width: 1200px;
 }
 
 .showcase-container {
@@ -1146,26 +1226,28 @@ footer {
     position: absolute;
     width: 400px;
     height: 450px;
-    margin-left: -200px;
-    margin-top: -225px;
     left: 50%;
     top: 50%;
+    margin-left: -200px;
+    margin-top: -225px;
     transform-style: preserve-3d;
-    cursor: pointer;
-    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
-    pointer-events: all !important;
+    transition: transform 1s, opacity 0.5s;
 }
-.showcase-slide.active {
-    z-index: 1;
+
+.showcase-slide .project-card {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s ease;
+    transform-origin: center;
+    backface-visibility: hidden;
 }
 
 .showcase-slide.active .project-card {
-    transform: scale(1.05);
+    transform: scale(1.1);
     box-shadow: 0 20px 40px rgba(26, 188, 156, 0.3);
 }
 
-
-/* Navigation */
+/* Enhanced Navigation Buttons */
 .showcase-btn {
     position: absolute;
     top: 50%;
@@ -1179,6 +1261,12 @@ footer {
     font-size: 28px;
     cursor: pointer;
     z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.showcase-btn:hover {
+    background: rgba(26, 188, 156, 0.8);
+    transform: translateY(-50%) scale(1.1);
 }
 
 .showcase-btn.prev {

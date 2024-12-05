@@ -172,7 +172,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 techStack: ["C++", "SFML", "2D Animation", "Level Design", "Pixel Art"],
                 demoLink: null,
                 githubLink: "https://github.com/Greenmuse123/Tetris-Recreation"
-                }
+                },
+            {
+                title: "2048 Game",
+                description: "A web-based implementation of the popular 2048 puzzle game. Players combine numbered tiles strategically to reach the 2048 tile. Features smooth animations, score tracking, best score storage, and responsive design that works on both desktop and mobile devices.",
+                image: "images/2048.jpg", // You'll need to add this image to your project
+                techStack: ["HTML", "CSS", "JavaScript", "Game Logic", "Local Storage", "Responsive Design", "Animation"],
+                demoLink: null, // Live demo link
+                githubLink: "https://github.com/Greenmuse123/2048-HTML-Game-Dev"
+            }
                 // You can add more game projects here
             ]
         }
@@ -458,7 +466,7 @@ class ProjectsShowcase {
         this.slides = document.querySelectorAll('.showcase-slide');
         this.totalSlides = this.slides.length;
         this.currentRotation = 0;
-        this.radius = 400;
+        this.radius = 400; // Distance of cards from the center
         
         this.init();
         this.setupControls();
@@ -491,7 +499,7 @@ class ProjectsShowcase {
             if (e.key === 'ArrowRight') this.rotate('right');
         });
 
-        // Simplified click handling
+        // Allow clicking on visible cards to rotate to them
         this.slides.forEach((slide, index) => {
             slide.addEventListener('click', () => {
                 const stepsToRotate = this.calculateStepsToFront(index);
@@ -532,12 +540,12 @@ class ProjectsShowcase {
             // Update slide position
             this.updateSlidePosition(slide, baseAngle);
             
-            // Calculate visibility
+            // Calculate visibility based on position
             const angleFromFront = Math.abs(((normalizedAngle + 180) % 360) - 180);
             const opacity = Math.cos(angleFromFront * Math.PI / 180);
             slide.style.opacity = Math.max(0.3, (opacity + 1) / 2);
             
-            // Make all slides clickable but highlight the front one
+            // Mark the front card as active
             const isFront = angleFromFront < 45;
             slide.classList.toggle('active', isFront);
             
@@ -550,6 +558,7 @@ class ProjectsShowcase {
     }
 }
 
+// Initialize the carousel when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new ProjectsShowcase();
 });

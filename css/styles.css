@@ -1450,3 +1450,17 @@ footer {
         font-size: 24px;
     }
 }
+.instagram-embed-container {
+    position: relative;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+.instagram-embed-container iframe {
+    max-width: 100% !important;
+}

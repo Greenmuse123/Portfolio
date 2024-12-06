@@ -288,71 +288,71 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         async loadPhotos() {
-        try {
-            const response = await fetch(
-                `https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,permalink,thumbnail_url&limit=${this.limit}&access_token=${this.accessToken}`
-            );
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            try {
+                const response = await fetch(
+                    `https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,permalink,thumbnail_url&limit=${this.limit}&access_token=${this.accessToken}`
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                return data.data.filter(item => item.media_type === 'IMAGE');
+            } catch (error) {
+                console.error('Error fetching Instagram photos:', error);
+                // Return null to trigger fallback
+                return null;
+            }
+        }
+    
+        createGalleryHTML(photos) {
+            // If we have Instagram photos, use them
+            if (photos) {
+                return `
+                    <div class="gallery-grid">
+                        ${photos.map(photo => `
+                            <div class="gallery-item">
+                                <img src="${photo.media_url}" alt="${photo.caption || 'Instagram photo'}" loading="lazy">
+                                <div class="gallery-item-overlay">
+                                    <a href="${photo.permalink}" target="_blank" class="gallery-item-link">
+                                        <i class="fab fa-instagram"></i>
+                                        View on Instagram
+                                    </a>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
             }
             
-            const data = await response.json();
-            return data.data.filter(item => item.media_type === 'IMAGE');
-        } catch (error) {
-            console.error('Error fetching Instagram photos:', error);
-            // Return null to trigger fallback
-            return null;
-        }
-    }
-
-    createGalleryHTML(photos) {
-        // If we have Instagram photos, use them
-        if (photos) {
+            // Fallback to local images
             return `
                 <div class="gallery-grid">
-                    ${photos.map(photo => `
+                    ${this.fallbackImages.map(imgPath => `
                         <div class="gallery-item">
-                            <img src="${photo.media_url}" alt="${photo.caption || 'Instagram photo'}" loading="lazy">
+                            <img src="${imgPath}" alt="Photography portfolio" loading="lazy">
                             <div class="gallery-item-overlay">
-                                <a href="${photo.permalink}" target="_blank" class="gallery-item-link">
-                                    <i class="fab fa-instagram"></i>
-                                    View on Instagram
-                                </a>
+                                <span class="gallery-item-text">Portfolio Image</span>
                             </div>
                         </div>
                     `).join('')}
                 </div>
+                <div class="instagram-notice">
+                    <p>Visit my Instagram <a href="https://www.instagram.com/CaughtByHabibi" target="_blank">@CaughtByHabibi</a> to see more photos!</p>
+                </div>
             `;
         }
-        
-        // Fallback to local images
-        return `
-            <div class="gallery-grid">
-                ${this.fallbackImages.map(imgPath => `
-                    <div class="gallery-item">
-                        <img src="${imgPath}" alt="Photography portfolio" loading="lazy">
-                        <div class="gallery-item-overlay">
-                            <span class="gallery-item-text">Portfolio Image</span>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-            <div class="instagram-notice">
-                <p>Visit my Instagram <a href="https://www.instagram.com/CaughtByHabibi" target="_blank">@CaughtByHabibi</a> to see more photos!</p>
-            </div>
-        `;
+    
+        createLoadingHTML() {
+            return `
+                <div class="gallery-loading">
+                    <div class="gallery-spinner"></div>
+                    <p>Loading portfolio...</p>
+                </div>
+            `;
+        }
     }
-
-    createLoadingHTML() {
-        return `
-            <div class="gallery-loading">
-                <div class="gallery-spinner"></div>
-                <p>Loading portfolio...</p>
-            </div>
-        `;
-    }
-}
 
     // Project opener function
 window.openProject = function(projectId) {

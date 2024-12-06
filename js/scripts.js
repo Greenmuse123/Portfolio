@@ -283,7 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Instagram Gallery
     class InstagramGallery {
         constructor() {
-            this.accessToken = 'bc3d3c60e5ab50daf73bd7e31f2e855f';
+            this.accessToken = '4d76e7e6bd6490c243284791c569b2c0';
             this.limit = 12;
         }
 

@@ -417,19 +417,39 @@ window.openProject = function(projectId) {
     }
     // Handle photography project
     else if (projectId === 'photography') {
-        const gallery = new InstagramGallery();
-        popupImage.innerHTML = gallery.createLoadingHTML();
+        popupImage.innerHTML = `
+            <div class="instagram-embed-container">
+                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/caughtbyhabibi/?utm_source=ig_embed&utm_campaign=loading" 
+                    data-instgrm-version="14" 
+                    style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); 
+                    margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
+                    <div style="padding:16px;">
+                        <a href="https://www.instagram.com/caughtbyhabibi/?utm_source=ig_embed&utm_campaign=loading" 
+                            style="background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank">
+                            <div style="display: flex; flex-direction: row; align-items: center;">
+                                <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div>
+                                <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;">
+                                    <div style="background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div>
+                                    <div style="background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div>
+                                </div>
+                            </div>
+                            <div style="padding: 19% 0;"></div>
+                        </a>
+                    </div>
+                </blockquote>
+            </div>
+            <script async src="//www.instagram.com/embed.js"></script>
+        `;
         
-        gallery.loadPhotos()
-            .then(photos => {
-                popupImage.innerHTML = photos.length ? 
-                    gallery.createGalleryHTML(photos) : 
-                    gallery.createErrorHTML();
-            })
-            .catch(() => {
-                popupImage.innerHTML = gallery.createErrorHTML();
-            });
-            
+        // Load Instagram embed script
+        if (!document.getElementById('instagram-embed-script')) {
+            const script = document.createElement('script');
+            script.id = 'instagram-embed-script';
+            script.async = true;
+            script.src = "//www.instagram.com/embed.js";
+            document.body.appendChild(script);
+        }
+                
         // Update links and content for photography project
         const demoLink = document.querySelector('.live-demo');
         const githubLink = document.querySelector('.github-repo');

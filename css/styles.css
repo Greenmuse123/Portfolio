@@ -455,6 +455,151 @@ header {
     color: #111;
 }
 
+/* Popup Styles */
+.fact-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    padding: 20px;
+}
+
+.fact-popup.active {
+    opacity: 1;
+}
+
+.popup-content {
+    background: #1a1b1f;
+    border: 2px solid #1abc9c;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+.fact-popup.active .popup-content {
+    transform: translateY(0);
+}
+
+.popup-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(26, 188, 156, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.popup-icon {
+    font-size: 2rem;
+}
+
+.popup-header h2 {
+    color: #1abc9c;
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.close-popup {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close-popup:hover {
+    color: #1abc9c;
+    transform: rotate(90deg);
+}
+
+.popup-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 20px;
+}
+
+.visual-container {
+    height: 300px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.popup-visual {
+    width: 100%;
+    height: 100%;
+}
+
+.content-text {
+    color: #fff;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.content-text p {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.highlights {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.highlight-item {
+    background: rgba(26, 188, 156, 0.1);
+    border: 1px solid rgba(26, 188, 156, 0.3);
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.highlight-item:hover {
+    background: rgba(26, 188, 156, 0.2);
+    transform: translateX(5px);
+}
+
+@media (max-width: 768px) {
+    .popup-body {
+        grid-template-columns: 1fr;
+    }
+
+    .visual-container {
+        height: 200px;
+    }
+
+    .popup-header h2 {
+        font-size: 1.5rem;
+    }
+}
+
 /* Projects Section */
 .projects {
     background: linear-gradient(180deg, #111111 0%, #1a1a1a 100%);
@@ -532,7 +677,7 @@ header {
 
 .project-image {
     width: 100%;
-    height: 77%;
+    height: 80%;
     position: relative;
     overflow: hidden;
 }
@@ -1199,29 +1344,32 @@ footer {
 }
 
 /* 3D Carousel Styles */
+/* 3D Projects Showcase Container */
 .projects-showcase {
     position: relative;
+    width: 100%;
     height: 600px;
-    perspective: 2000px;
     margin: 50px auto;
-    max-width: 1200px;
+    perspective: 2000px;
+    max-width: 1400px;
 }
 
 .showcase-container {
-    position: absolute;
+    position: relative;
     width: 100%;
     height: 100%;
     transform-style: preserve-3d;
 }
 
 .showcase-slides {
-    position: absolute;
+    position: relative;
     width: 100%;
     height: 100%;
     transform-style: preserve-3d;
-    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Individual Project Cards */
 .showcase-slide {
     position: absolute;
     width: 400px;
@@ -1231,23 +1379,29 @@ footer {
     margin-left: -200px;
     margin-top: -225px;
     transform-style: preserve-3d;
-    transition: transform 1s, opacity 0.5s;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
 }
 
-.showcase-slide .project-card {
+.project-card {
     width: 100%;
     height: 100%;
-    transition: transform 0.5s ease;
-    transform-origin: center;
-    backface-visibility: hidden;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .showcase-slide.active .project-card {
     transform: scale(1.1);
-    box-shadow: 0 20px 40px rgba(26, 188, 156, 0.3);
+    box-shadow: 0 25px 45px rgba(26, 188, 156, 0.3);
 }
 
-/* Enhanced Navigation Buttons */
+/* Navigation Buttons */
 .showcase-btn {
     position: absolute;
     top: 50%;
@@ -1269,10 +1423,30 @@ footer {
     transform: translateY(-50%) scale(1.1);
 }
 
-.showcase-btn.prev {
-    left: 20px;
+.showcase-btn.prev { left: 20px; }
+.showcase-btn.next { right: 20px; }
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .showcase-slide {
+        width: 350px;
+        height: 400px;
+        margin-left: -175px;
+        margin-top: -200px;
+    }
 }
 
-.showcase-btn.next {
-    right: 20px;
+@media (max-width: 768px) {
+    .showcase-slide {
+        width: 300px;
+        height: 350px;
+        margin-left: -150px;
+        margin-top: -175px;
+    }
+    
+    .showcase-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+    }
 }

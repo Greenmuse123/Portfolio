@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     title: "FOV Calculator",
                     description: "A professional FOV (Field of View) calculator tool developed for CTUS. This web application helps users calculate perfect camera positioning and field of view for security installations across different camera models and scenarios.",
                     image: "images/FOVcalc1.png",
-                    techStack: ["HTML", "CSS", "JavaScript", "Responsive Design", "SVG Graphics"],
+                    techStack: ["HTML", "CSS", "JavaScript", "Responsive Design","AWS", "SVG Graphics"],
                     demoLink: "https://tools.ctus.live/fovcalc/",
                     githubLink: null
                 },
@@ -466,10 +466,12 @@ class ProjectsShowcase {
         this.slides = document.querySelectorAll('.showcase-slide');
         this.totalSlides = this.slides.length;
         this.currentRotation = 0;
-        this.radius = 400; // Distance of cards from the center
+        this.radius = 600; // Distance of cards from the center
+        this.autoRotateInterval = null;
         
         this.init();
         this.setupControls();
+        this.startAutoRotate();
     }
 
     init() {
@@ -485,29 +487,55 @@ class ProjectsShowcase {
     }
 
     updateSlidePosition(slide, angle) {
+        const radians = angle * Math.PI / 180;
+        const z = this.radius * Math.cos(radians);
+        const x = this.radius * Math.sin(radians);
+        
         slide.style.transform = `
-            rotateY(${angle}deg) 
-            translateZ(${this.radius}px)`;
+            translate3d(${x}px, 0, ${z}px)
+            rotateY(${angle}deg)
+        `;
     }
 
     setupControls() {
-        document.querySelector('.showcase-btn.prev').onclick = () => this.rotate('left');
-        document.querySelector('.showcase-btn.next').onclick = () => this.rotate('right');
+        // Button controls
+        document.querySelector('.showcase-btn.prev').onclick = () => {
+            this.stopAutoRotate();
+            this.rotate('left');
+        };
         
+        document.querySelector('.showcase-btn.next').onclick = () => {
+            this.stopAutoRotate();
+            this.rotate('right');
+        };
+        
+        // Keyboard controls
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') this.rotate('left');
-            if (e.key === 'ArrowRight') this.rotate('right');
+            if (e.key === 'ArrowLeft') {
+                this.stopAutoRotate();
+                this.rotate('left');
+            }
+            if (e.key === 'ArrowRight') {
+                this.stopAutoRotate();
+                this.rotate('right');
+            }
         });
 
-        // Allow clicking on visible cards to rotate to them
+        // Click on card to rotate to it
         this.slides.forEach((slide, index) => {
             slide.addEventListener('click', () => {
+                this.stopAutoRotate();
                 const stepsToRotate = this.calculateStepsToFront(index);
                 if (stepsToRotate !== 0) {
                     this.currentRotation += (stepsToRotate * (360 / this.totalSlides));
                     this.updateCarousel();
                 }
             });
+        });
+
+        // Restart auto-rotation when mouse leaves the carousel
+        this.container.parentElement.addEventListener('mouseleave', () => {
+            this.startAutoRotate();
         });
     }
 
@@ -545,20 +573,386 @@ class ProjectsShowcase {
             const opacity = Math.cos(angleFromFront * Math.PI / 180);
             slide.style.opacity = Math.max(0.3, (opacity + 1) / 2);
             
-            // Mark the front card as active
+            // Update active state
             const isFront = angleFromFront < 45;
             slide.classList.toggle('active', isFront);
             
-            // Keep cards facing front
+            // Keep project cards facing forward
             const projectCard = slide.querySelector('.project-card');
             if (projectCard) {
                 projectCard.style.transform = `rotateY(${-baseAngle - this.currentRotation}deg)`;
             }
         });
     }
+
+    startAutoRotate() {
+        if (!this.autoRotateInterval) {
+            this.autoRotateInterval = setInterval(() => {
+                this.rotate('right');
+            }, 8000);
+        }
+    }
+
+    stopAutoRotate() {
+        if (this.autoRotateInterval) {
+            clearInterval(this.autoRotateInterval);
+            this.autoRotateInterval = null;
+        }
+    }
 }
 
 // Initialize the carousel when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new ProjectsShowcase();
+});
+
+// Fun Facts Popup Handler
+document.addEventListener('DOMContentLoaded', () => {
+    const factContent = {
+        musician: {
+            title: "Musical Journey",
+            icon: "🎷",
+            content: `Music has been an integral part of my life, shaping my creative expression and problem-solving abilities. 
+            From the complex harmonies of jazz to the structured beauty of classical music, I've explored various musical 
+            landscapes that have enriched my perspective.`,
+            highlights: [
+                "Multi-instrumentalist: Saxophone, Bassoon, Clarinet, Flute",
+                "2019 Jazz Downbeat Award",
+                "Passionate about both classical and jazz genres"
+            ],
+            visualFeature: {
+                type: 'wave',
+                color: '#1abc9c'
+            }
+        },
+        'gamer-tech': {
+            title: "Gaming & Technology Passion",
+            icon: "🎮",
+            content: `My fascination with gaming and technology goes beyond mere entertainment - it's a gateway to understanding 
+            user experience, digital innovation, and the future of interactive media. This passion drives me to stay at the 
+            forefront of technological advancements and their practical applications.`,
+            highlights: [
+                "Active in gaming communities and development",
+                "Hardware enthusiast and custom PC builder",
+                "Exploring VR/AR technologies"
+            ],
+            visualFeature: {
+                type: 'matrix',
+                color: '#1abc9c'
+            }
+        },
+        photography: {
+            title: "Through the Lens",
+            icon: "📷",
+            content: `Photography is my way of capturing moments and telling stories without words. With my Canon M50 Mark II, 
+            I explore the world through different perspectives, finding beauty in both grand landscapes and subtle details. 
+            This visual art form has taught me valuable lessons about composition, timing, and the power of visual communication.`,
+            highlights: [
+                "Street and portrait photography specialist",
+                "Adobe Lightroom & Photoshop workflow",
+                "Event photography experience"
+            ],
+            visualFeature: {
+                type: 'aperture',
+                color: '#1abc9c'
+            }
+        },
+        developer: {
+            title: "Development Journey",
+            icon: "💻",
+            content: `My development journey is a perfect blend of logic and creativity. Whether it's crafting responsive 
+            websites or building immersive games, I'm constantly pushing the boundaries of what's possible in digital spaces. 
+            This passion for creation drives me to learn new technologies and explore innovative solutions.`,
+            highlights: [
+                "Full-stack web development expertise",
+                "Game development with Unity and SFML",
+                "UI/UX design enthusiast"
+            ],
+            visualFeature: {
+                type: 'code',
+                color: '#1abc9c'
+            }
+        }
+    };
+
+    function createVisualFeature(type) {
+        const canvas = document.createElement('canvas');
+        canvas.className = 'popup-visual';
+        const ctx = canvas.getContext('2d');
+        let animationFrame;
+        
+        switch(type) {
+            case 'wave':
+                // Audio waveform animation
+                let phase = 0;
+                function drawWave() {
+                    ctx.fillStyle = 'rgba(26, 27, 31, 0.2)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#1abc9c';
+                    ctx.lineWidth = 2;
+                    
+                    for(let x = 0; x < canvas.width; x++) {
+                        const y = canvas.height/2 + Math.sin(x/30 + phase) * 30;
+                        ctx.lineTo(x, y);
+                    }
+                    
+                    ctx.stroke();
+                    phase += 0.1;
+                    animationFrame = requestAnimationFrame(drawWave);
+                }
+                drawWave();
+                break;
+
+            case 'matrix':
+                // Matrix-style falling characters
+                const chars = "ABCDEF0123456789";
+                const drops = [];
+                
+                for(let i = 0; i < canvas.width/20; i++) {
+                    drops[i] = 1;
+                }
+                
+                function drawMatrix() {
+                    ctx.fillStyle = 'rgba(26, 27, 31, 0.1)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    ctx.fillStyle = '#1abc9c';
+                    ctx.font = '15px monospace';
+                    
+                    for(let i = 0; i < drops.length; i++) {
+                        const text = chars[Math.floor(Math.random() * chars.length)];
+                        ctx.fillText(text, i*20, drops[i]*20);
+                        
+                        if(drops[i]*20 > canvas.height && Math.random() > 0.975)
+                            drops[i] = 0;
+                        
+                        drops[i]++;
+                    }
+                    animationFrame = requestAnimationFrame(drawMatrix);
+                }
+                drawMatrix();
+                break;
+
+                case 'aperture':
+                    // Camera aperture animation with camera body
+                    let rotation = 0;
+                    const bladeCount = 8;
+                    const radius = 40;
+                    
+                    function drawCamera() {
+                        // Clear canvas
+                        ctx.fillStyle = 'rgba(26, 27, 31, 0.3)';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        
+                        // Center position
+                        const centerX = canvas.width/2;
+                        const centerY = canvas.height/2;
+                        
+                        // Draw camera body
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.roundRect(centerX - 100, centerY - 60, 200, 120, 10);
+                        ctx.fillStyle = '#2c2c2c';
+                        ctx.fill();
+                        ctx.strokeStyle = '#1abc9c';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                
+                        // Draw lens barrel (behind aperture)
+                        ctx.beginPath();
+                        ctx.arc(centerX, centerY, radius + 15, 0, Math.PI * 2);
+                        ctx.fillStyle = '#222';
+                        ctx.fill();
+                        ctx.strokeStyle = '#1abc9c';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                        
+                        // Draw camera details
+                        // Viewfinder
+                        ctx.fillStyle = '#222';
+                        ctx.fillRect(centerX + 40, centerY - 50, 40, 30);
+                        ctx.strokeStyle = '#1abc9c';
+                        ctx.strokeRect(centerX + 40, centerY - 50, 40, 30);
+                        
+                        // Top LCD
+                        ctx.fillStyle = '#1c1c1c';
+                        ctx.fillRect(centerX - 30, centerY - 50, 50, 20);
+                        ctx.strokeStyle = '#1abc9c40';
+                        ctx.strokeRect(centerX - 30, centerY - 50, 50, 20);
+                        
+                        // Draw aperture blades
+                        ctx.save();
+                        ctx.translate(centerX, centerY);
+                        ctx.rotate(rotation);
+                        
+                        for(let i = 0; i < bladeCount; i++) {
+                            ctx.save();
+                            ctx.rotate((Math.PI * 2 / bladeCount) * i);
+                            
+                            ctx.beginPath();
+                            ctx.moveTo(0, 0);
+                            ctx.arc(0, 0, radius, 0, Math.PI/bladeCount);
+                            
+                            const gradient = ctx.createLinearGradient(0, 0, radius, 0);
+                            gradient.addColorStop(0, '#1abc9c');
+                            gradient.addColorStop(0.5, '#1abc9c80');
+                            gradient.addColorStop(1, '#1abc9c40');
+                            
+                            ctx.fillStyle = gradient;
+                            ctx.fill();
+                            
+                            ctx.strokeStyle = '#1abc9c';
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                            
+                            ctx.restore();
+                        }
+                        
+                        // Draw lens rim
+                        ctx.beginPath();
+                        ctx.arc(0, 0, radius + 5, 0, Math.PI * 2);
+                        ctx.strokeStyle = '#1abc9c';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        
+                        // Center point
+                        ctx.beginPath();
+                        ctx.arc(0, 0, 3, 0, Math.PI * 2);
+                        ctx.fillStyle = '#1abc9c';
+                        ctx.fill();
+                        
+                        ctx.restore();
+                        
+                        // Add some subtle reflections/highlights
+                        ctx.beginPath();
+                        ctx.moveTo(centerX - 90, centerY - 50);
+                        ctx.lineTo(centerX - 80, centerY - 40);
+                        ctx.strokeStyle = '#1abc9c20';
+                        ctx.lineWidth = 10;
+                        ctx.stroke();
+                        
+                        rotation += 0.01;
+                        animationFrame = requestAnimationFrame(drawCamera);
+                    }
+                    drawCamera();
+                    break;
+
+            case 'code':
+                // Floating code particles
+                const particles = [];
+                for(let i = 0; i < 50; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        size: Math.random() * 3 + 1,
+                        speedX: Math.random() * 2 - 1,
+                        speedY: Math.random() * 2 - 1
+                    });
+                }
+                
+                function drawParticles() {
+                    ctx.fillStyle = 'rgba(26, 27, 31, 0.2)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    ctx.fillStyle = '#1abc9c';
+                    particles.forEach(p => {
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        p.x += p.speedX;
+                        p.y += p.speedY;
+                        
+                        if(p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                        if(p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                    });
+                    
+                    animationFrame = requestAnimationFrame(drawParticles);
+                }
+                drawParticles();
+                break;
+        }
+
+        return {
+            element: canvas,
+            cleanup: () => cancelAnimationFrame(animationFrame)
+        };
+    }
+
+    function showPopup(type) {
+        const content = factContent[type];
+        if (!content) return;
+
+        // Remove any existing popup
+        const existingPopup = document.querySelector('.fact-popup');
+        if (existingPopup) {
+            existingPopup.remove();
+        }
+
+        const popupHTML = `
+            <div class="fact-popup">
+                <div class="popup-content">
+                    <div class="popup-header">
+                        <div class="header-content">
+                            <span class="popup-icon">${content.icon}</span>
+                            <h2>${content.title}</h2>
+                        </div>
+                        <button class="close-popup">×</button>
+                    </div>
+                    <div class="popup-body">
+                        <div class="visual-container"></div>
+                        <div class="content-text">
+                            <p>${content.content}</p>
+                            <div class="highlights">
+                                ${content.highlights.map(h => `<div class="highlight-item">${h}</div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', popupHTML);
+
+        const popup = document.querySelector('.fact-popup');
+        const visualContainer = popup.querySelector('.visual-container');
+        
+        // Add visual feature
+        const { element, cleanup } = createVisualFeature(content.visualFeature.type);
+        visualContainer.appendChild(element);
+
+        // Fade in effect
+        requestAnimationFrame(() => {
+            popup.classList.add('active');
+        });
+
+        // Close handlers
+        function closePopup() {
+            popup.classList.remove('active');
+            cleanup();
+            setTimeout(() => popup.remove(), 300);
+        }
+
+        popup.querySelector('.close-popup').addEventListener('click', closePopup);
+        popup.addEventListener('click', e => {
+            if (e.target === popup) closePopup();
+        });
+        
+        document.addEventListener('keydown', function escHandler(e) {
+            if (e.key === 'Escape') {
+                closePopup();
+                document.removeEventListener('keydown', escHandler);
+            }
+        });
+    }
+
+    // Attach click handlers to fact cards
+    document.querySelectorAll('.fact-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const factType = card.getAttribute('data-fact');
+            showPopup(factType);
+        });
+    });
 });
